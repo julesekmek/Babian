@@ -8,6 +8,7 @@ export interface DrinkRow {
   image_url?: string;
   owner_id: string;
   is_active: boolean;
+  market_price: string | number;
   created_at: string;
 }
 

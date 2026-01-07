@@ -8,6 +8,7 @@ export interface Drink {
   imageUrl?: string;
   ownerId: string;
   isActive: boolean;
+  marketPrice: number; // Price before events
 }
 
 export interface MarketConfig {
@@ -36,7 +37,8 @@ export interface Order {
 
 export interface PriceSnapshot {
   drinkId: string;
-  price: number;
+  price: number; // Display price (post-event)
+  marketPrice: number; // Internal price (pre-event)
   variation: number;
 }
 
@@ -44,9 +46,12 @@ export interface MarketEvent {
   id: string;
   barmanId: string;
   name: string;
+  description?: string;
   type: 'fixed_price' | 'discount' | 'crash';
   value: number;
   startAt: Date;
   endAt: Date;
   drinkIds: string[]; // Associated drinks
+  isTemplate?: boolean;
+  status?: 'template' | 'scheduled' | 'active' | 'finished';
 }

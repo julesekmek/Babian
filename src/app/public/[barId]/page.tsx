@@ -1,25 +1,39 @@
 "use client";
 
 import React, { useEffect, useState, useMemo, useCallback, use } from 'react';
-import { PriceTicker } from '@/features/market/components/PriceTicker';
+import { MarketGrid } from '@/features/market/components/MarketGrid';
 import { MarketCountdown } from '@/features/market/components/MarketCountdown';
+import { NewsTicker } from '@/features/market/components/NewsTicker';
 import { SupabaseDrinkRepository } from '@/infrastructure/supabase/SupabaseDrinkRepository';
 import { SupabaseMarketRepository } from '@/infrastructure/supabase/SupabaseMarketRepository';
-import { Drink, MarketSession, MarketConfig } from '@/domain/types';
+import { Drink, MarketSession, MarketConfig, MarketEvent } from '@/domain/types';
 import { createClient } from '@/infrastructure/supabase/client';
-import { motion, AnimatePresence } from 'framer-motion';
-import { TrendingUp, TrendingDown, Minus, BarChart3 } from 'lucide-react';
+import { useSound } from '@/hooks/useSound';
+import { BarChart3 } from 'lucide-react';
 
 export default function PublicPage({ params }: { params: Promise<{ barId: string }> }) {
   const { barId } = use(params);
   const [drinks, setDrinks] = useState<Drink[]>([]);
   const [session, setSession] = useState<MarketSession | null>(null);
   const [config, setConfig] = useState<MarketConfig | null>(null);
+  const [activeEvents, setActiveEvents] = useState<MarketEvent[]>([]);
   const [variations, setVariations] = useState<Record<string, number>>({});
   const [loading, setLoading] = useState(true);
 
   const drinkRepo = useMemo(() => new SupabaseDrinkRepository(), []);
   const marketRepo = useMemo(() => new SupabaseMarketRepository(), []);
+  
+  // Sound notification
+  const { play: playSound } = useSound('/sounds/cycle-end.mp3');
+
+  // Memoize sorted drinks to avoid re-sorting on every variations update unnecessarily
+  const sortedDrinks = useMemo(() => {
+    return [...drinks].sort((a, b) => {
+      const varA = variations[a.id] || 0;
+      const varB = variations[b.id] || 0;
+      return varB - varA;
+    });
+  }, [drinks, variations]);
 
   const fetchData = useCallback(async () => {
     try {
@@ -27,20 +41,15 @@ export default function PublicPage({ params }: { params: Promise<{ barId: string
       setSession(activeSession);
 
       if (activeSession) {
-        const [drinkList, marketConfig] = await Promise.all([
+        const [drinkList, marketConfig, events] = await Promise.all([
           drinkRepo.getDrinksByOwner(barId),
           marketRepo.getConfig(barId),
+          marketRepo.getActiveEvents(barId)
         ]);
         
-        // Sort drinks by variation (top performing first)
-        const sortedDrinks = [...drinkList].sort((a, b) => {
-          const varA = variations[a.id] || 0;
-          const varB = variations[b.id] || 0;
-          return varB - varA;
-        });
-        
-        setDrinks(sortedDrinks);
+        setDrinks(drinkList);
         setConfig(marketConfig);
+        setActiveEvents(events);
 
         // Fetch last variations from history
         const client = createClient();
@@ -48,134 +57,112 @@ export default function PublicPage({ params }: { params: Promise<{ barId: string
           .from('price_history')
           .select('drink_id, variation')
           .eq('session_id', activeSession.id)
-          .eq('cycle_number', activeSession.currentCycleNumber - 1);
+          .eq('cycle_number', activeSession.currentCycleNumber);
         
         const varMap: Record<string, number> = {};
         history?.forEach(h => varMap[h.drink_id] = Number(h.variation));
         setVariations(varMap);
       }
-    } catch (err) {
-      console.error("Error fetching market data:", err);
+    } catch (err: unknown) {
+      console.error("Error fetching market data for barId:", barId);
     } finally {
       setLoading(false);
     }
-  }, [barId, marketRepo, drinkRepo, variations]);
+  }, [barId, marketRepo, drinkRepo]); // Removed variations from here!
 
   useEffect(() => {
-    // eslint-disable-next-line @typescript-eslint/no-floating-promises
     fetchData();
     const interval = setInterval(fetchData, 10000); // 10s polling safety
     return () => clearInterval(interval);
   }, [fetchData]);
 
+  const handleCycleEnd = useCallback(async () => {
+    console.log("🔔 Cycle end triggered!");
+    playSound();
+    if (session?.barmanId) {
+        try {
+            const res = await fetch('/api/market/cycle', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ barmanId: session.barmanId })
+            });
+            
+            if (!res.ok) {
+                const errorData = await res.json();
+                console.error("❌ Cycle API Error:", errorData.error, errorData.details);
+            } else {
+                console.log("✅ Cycle processed successfully");
+                fetchData();
+            }
+        } catch (e) {
+            console.error("Failed to call cycle API:", e);
+        }
+    } else {
+         console.warn("Session not ready for cycle increment");
+    }
+  }, [playSound, fetchData, session?.barmanId]);
+
   if (loading) return (
-    <div className="min-h-screen bg-black flex items-center justify-center">
+    <div className="h-screen w-screen bg-black flex items-center justify-center overflow-hidden">
        <div className="text-rose-500 font-black italic text-4xl animate-pulse tracking-tighter">CHARGEMENT DU MARCHÉ...</div>
     </div>
   );
 
   if (!session) return (
-    <div className="min-h-screen bg-black flex items-center justify-center p-8">
+    <div className="h-screen w-screen bg-black flex items-center justify-center p-8 overflow-hidden">
        <div className="text-center space-y-4">
           <BarChart3 size={80} className="mx-auto text-neutral-800" />
           <h1 className="text-4xl font-black italic uppercase tracking-tighter">Bourse Fermée</h1>
-          <p className="text-neutral-500 font-bold max-w-xs">Le marché n&apos;est pas encore ouvert pour ce bar. Revenez bientôt !</p>
+          <p className="text-neutral-500 font-bold max-w-xs mx-auto">Le marché n&apos;est pas encore ouvert pour ce bar. Revenez bientôt !</p>
        </div>
     </div>
   );
 
   return (
-    <div className="min-h-screen bg-black text-white p-6 md:p-12 space-y-12 overflow-hidden">
+    <div className="h-screen w-screen bg-black text-white flex flex-col overflow-hidden">
       
-      {/* Header Display */}
-      <div className="flex flex-col md:flex-row justify-between items-center gap-8 border-b border-neutral-900 pb-12">
-        <div className="space-y-2 text-center md:text-left">
-           <h1 className="text-6xl font-black italic tracking-tighter leading-none">
-             BÉBÉ <span className="text-rose-500 italic">BOURSICOTE</span>
-           </h1>
-           <p className="text-neutral-500 font-black text-xs uppercase tracking-widest flex items-center justify-center md:justify-start gap-2">
-              <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-              COTATION EN DIRECT • CYCLE #{session.currentCycleNumber}
-           </p>
-        </div>
+      {/* Header - Fixed Height */}
+      <div className="shrink-0 px-6 py-4 md:px-8 border-b border-neutral-900 bg-black/50 backdrop-blur-md z-10 flex justify-between items-end">
+          <div className="space-y-4">
+             {/* Title & Concept */}
+             <div className="flex flex-col gap-2">
+                 <h1 className="text-2xl md:text-4xl font-black italic tracking-tighter leading-none text-white uppercase">
+                     LA BOURSE <span className="text-rose-500">DES BOISSONS EN DIRECT</span>
+                 </h1>
 
-        {config && (
-          <div className="w-full md:w-96">
-            <MarketCountdown 
-              durationSeconds={config.cycleDurationSeconds}
-              lastUpdateAt={session.lastPriceUpdateAt}
-              onFinish={() => setTimeout(fetchData, 2000)}
-            />
-          </div>
-        )}
-      </div>
-
-      {/* Market Board */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-        <AnimatePresence mode="popLayout">
-          {drinks.map((drink, index) => {
-            const variation = variations[drink.id] || 0;
-            const isUp = variation > 0;
-            const isDown = variation < 0;
-
-            return (
-              <motion.div
-                layout
-                key={drink.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.05 }}
-                className={`p-8 rounded-[2.5rem] bg-neutral-900 border-2 transition-all duration-500 shadow-2xl ${
-                  isUp ? 'border-green-500/20' : isDown ? 'border-rose-500/20' : 'border-neutral-800'
-                }`}
-              >
-                <div className="space-y-6">
-                  <div className="flex justify-between items-start">
-                    <div className="w-14 h-14 bg-neutral-800 rounded-2xl flex items-center justify-center text-rose-500">
-                      <BarChart3 size={28} />
-                    </div>
-                    <div className={`flex items-center gap-1 font-black text-sm italic ${
-                      isUp ? 'text-green-500' : isDown ? 'text-rose-500' : 'text-neutral-500'
-                    }`}>
-                      {isUp && <TrendingUp size={16} />}
-                      {isDown && <TrendingDown size={16} />}
-                      {!isUp && !isDown && <Minus size={16} />}
-                      {variation > 0 ? '+' : ''}{variation.toFixed(2)}€
-                    </div>
-                  </div>
-
-                  <div className="space-y-1">
-                    <h2 className="text-2xl font-black uppercase tracking-tight truncate">{drink.name}</h2>
-                    <p className="text-[10px] text-neutral-500 font-bold uppercase tracking-widest">Prix actuel</p>
-                  </div>
-
-                  <div className="flex items-end justify-between">
-                     <span className="text-5xl font-black italic tracking-tighter tabular-nums drop-shadow-lg">
-                       <PriceTicker value={drink.currentPrice} />
-                     </span>
-                     <span className="mb-2 text-neutral-600 font-bold text-lg italic tracking-tight">EUR</span>
-                  </div>
-                </div>
-              </motion.div>
-            );
-          })}
-        </AnimatePresence>
-      </div>
-
-      {/* Footer Ticker Style */}
-      <div className="fixed bottom-0 left-0 right-0 bg-neutral-950 border-t border-neutral-900 p-4 h-16 flex items-center overflow-hidden">
-        <div className="flex gap-12 whitespace-nowrap animate-marquee">
-          {drinks.map(d => (
-             <div key={`ticker-${d.id}`} className="flex items-center gap-3 text-xs font-black uppercase tracking-widest">
-               <span className="text-neutral-400">{d.name}</span>
-               <span className="text-white italic">{d.currentPrice.toFixed(2)}€</span>
-               <span className={variations[d.id] > 0 ? 'text-green-500' : variations[d.id] < 0 ? 'text-rose-500' : 'text-neutral-700'}>
-                  {(variations[d.id] || 0) > 0 ? '▲' : (variations[d.id] || 0) < 0 ? '▼' : '•'}
-               </span>
+                 <p className="text-neutral-400 text-xs md:text-sm font-medium leading-relaxed">
+                    Chaque commande change le prix en temps réel. Les boissons populaires <span className="text-green-500 font-bold">augmentent</span>, celles moins demandées <span className="text-rose-500 font-bold">diminuent</span>. Soyez attentifs !
+                 </p>
              </div>
-          ))}
-          {/* Duplicate for seamless marquee if needed, simplified here */}
-        </div>
+          </div>
+
+          {config && (
+            <div className="mb-1">
+              <MarketCountdown 
+                durationSeconds={config.cycleDurationSeconds}
+                lastUpdateAt={session.lastPriceUpdateAt}
+                onFinish={() => {}} // No-op, handled by onCycleEnd
+                onCycleEnd={handleCycleEnd}
+              />
+            </div>
+          )}
+      </div>
+
+      {/* Market Grid - Flexible Height */}
+      <div className="flex-1 overflow-hidden relative">
+          {/* Subtle Grid Background */}
+          <div className="absolute inset-0 bg-[linear-gradient(to_right,#171717_1px,transparent_1px),linear-gradient(to_bottom,#171717_1px,transparent_1px)] bg-size-[4rem_4rem] mask-[radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] opacity-20 pointer-events-none" />
+          
+          <MarketGrid drinks={sortedDrinks} variations={variations} />
+      </div>
+
+      {/* News Ticker - Fixed Height (Placeholder height is handled by component fixed positioning) */}
+      <div className="h-16 shrink-0">
+         <NewsTicker 
+            events={activeEvents} 
+            topDrinks={sortedDrinks} 
+            variations={variations}
+         />
       </div>
     </div>
   );

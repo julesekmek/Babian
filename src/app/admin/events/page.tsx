@@ -21,10 +21,11 @@ export default function AdminEventsPage() {
   // Form State
   const [newEvent, setNewEvent] = useState({
     name: '',
+    description: '',
     type: 'discount' as MarketEvent['type'],
     value: '30',
     durationMinutes: '15',
-    timing: 'immediate' as 'immediate' | 'scheduled',
+    timing: 'immediate' as 'immediate' | 'scheduled' | 'template',
     scheduledTime: '',
     selectedDrinkIds: [] as string[]
   });
@@ -67,20 +68,26 @@ export default function AdminEventsPage() {
     setIsSaving(true);
     
     try {
-      const startAt = newEvent.timing === 'immediate' 
-        ? new Date() 
-        : new Date(newEvent.scheduledTime);
+      const isTemplate = newEvent.timing === 'template';
+      const startAt = isTemplate 
+        ? new Date('2099-01-01') // Far future for templates
+        : newEvent.timing === 'immediate' 
+          ? new Date() 
+          : new Date(newEvent.scheduledTime);
       
       const endAt = new Date(startAt.getTime() + parseInt(newEvent.durationMinutes) * 60000);
 
       const created = await marketRepo.createEvent({
         barmanId: user.id,
         name: newEvent.name,
+        description: newEvent.description,
         type: newEvent.type,
         value: parseFloat(newEvent.value),
         startAt,
         endAt,
-        drinkIds: newEvent.selectedDrinkIds
+        drinkIds: newEvent.selectedDrinkIds,
+        isTemplate,
+        status: isTemplate ? 'template' : newEvent.timing === 'scheduled' ? 'scheduled' : 'active'
       });
 
       setEvents(prev => [created, ...prev]);
@@ -88,6 +95,7 @@ export default function AdminEventsPage() {
       // Reset form
       setNewEvent({
         name: '',
+        description: '',
         type: 'discount',
         value: '30',
         durationMinutes: '15',
@@ -276,6 +284,18 @@ export default function AdminEventsPage() {
                     />
                   </div>
 
+                  {/* Description */}
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-black text-neutral-500 uppercase px-1">Description (optionnelle)</label>
+                    <textarea 
+                      placeholder="Détails de l'événement pour référence..."
+                      value={newEvent.description}
+                      onChange={e => setNewEvent(prev => ({ ...prev, description: e.target.value }))}
+                      rows={3}
+                      className="w-full bg-neutral-800 border-none rounded-xl p-4 font-medium focus:ring-2 focus:ring-rose-500 transition-all text-sm resize-none"
+                    />
+                  </div>
+
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     {/* Event Type */}
                     <div className="space-y-2">
@@ -320,17 +340,22 @@ export default function AdminEventsPage() {
                      {/* Timing */}
                      <div className="space-y-2">
                         <label className="text-[10px] font-black text-neutral-500 uppercase px-1">Lancement</label>
-                        <div className="flex bg-neutral-800 p-1 rounded-xl">
+                        <div className="grid grid-cols-3 bg-neutral-800 p-1 rounded-xl">
                            <button
                              type="button"
                              onClick={() => setNewEvent(prev => ({ ...prev, timing: 'immediate' }))}
-                             className={`flex-1 py-2 text-[10px] font-black uppercase rounded-lg transition-all ${newEvent.timing === 'immediate' ? 'bg-neutral-700 text-white shadow-md' : 'text-neutral-500'}`}
+                             className={`py-2 text-[10px] font-black uppercase rounded-lg transition-all ${newEvent.timing === 'immediate' ? 'bg-neutral-700 text-white shadow-md' : 'text-neutral-500'}`}
                            >Immédiat</button>
                            <button
                              type="button"
                              onClick={() => setNewEvent(prev => ({ ...prev, timing: 'scheduled' }))}
-                             className={`flex-1 py-2 text-[10px] font-black uppercase rounded-lg transition-all ${newEvent.timing === 'scheduled' ? 'bg-neutral-700 text-white shadow-md' : 'text-neutral-500'}`}
+                             className={`py-2 text-[10px] font-black uppercase rounded-lg transition-all ${newEvent.timing === 'scheduled' ? 'bg-neutral-700 text-white shadow-md' : 'text-neutral-500'}`}
                            >Planifié</button>
+                           <button
+                             type="button"
+                             onClick={() => setNewEvent(prev => ({ ...prev, timing: 'template' }))}
+                             className={`py-2 text-[10px] font-black uppercase rounded-lg transition-all ${newEvent.timing === 'template' ? 'bg-neutral-700 text-white shadow-md' : 'text-neutral-500'}`}
+                           >En live</button>
                         </div>
                         {newEvent.timing === 'scheduled' && (
                            <input 

@@ -3,8 +3,14 @@ import { MarketSession, MarketConfig, MarketEvent } from '../../domain/types';
 import { IMarketSessionRepository } from '../../domain/repositories/IMarketSessionRepository';
 import { MarketSessionRow, MarketConfigRow } from './types';
 
+import { SupabaseClient } from '@supabase/supabase-js';
+
 export class SupabaseMarketRepository implements IMarketSessionRepository {
-  private client = createClient();
+  private client: SupabaseClient;
+
+  constructor(client?: SupabaseClient) {
+    this.client = client || createClient();
+  }
 
   async getActiveSession(barmanId: string): Promise<MarketSession | null> {
     const { data, error } = await this.client
@@ -91,6 +97,19 @@ export class SupabaseMarketRepository implements IMarketSessionRepository {
     return data.map(this.mapEvent);
   }
 
+  async getTemplateEvents(barmanId: string): Promise<MarketEvent[]> {
+    const { data, error } = await this.client
+      .from('market_events')
+      .select('*, event_drinks(drink_id)')
+      .eq('barman_id', barmanId)
+      .eq('is_template', true)
+      .eq('status', 'template')
+      .order('created_at', { ascending: false });
+
+    if (error) throw error;
+    return data.map(this.mapEvent);
+  }
+
   async createEvent(event: Omit<MarketEvent, 'id'>): Promise<MarketEvent> {
     // 1. Insert event
     const { data: eventData, error: eventError } = await this.client
@@ -98,10 +117,13 @@ export class SupabaseMarketRepository implements IMarketSessionRepository {
       .insert({
         barman_id: event.barmanId,
         name: event.name,
+        description: event.description,
         type: event.type,
         value: event.value,
         start_at: event.startAt.toISOString(),
-        end_at: event.endAt.toISOString()
+        end_at: event.endAt.toISOString(),
+        is_template: event.isTemplate || false,
+        status: event.status || 'active'
       })
       .select()
       .single();
@@ -125,6 +147,26 @@ export class SupabaseMarketRepository implements IMarketSessionRepository {
     };
   }
 
+  async activateEvent(eventId: string, durationMinutes: number): Promise<MarketEvent> {
+    const now = new Date();
+    const endAt = new Date(now.getTime() + durationMinutes * 60000);
+
+    const { data, error } = await this.client
+      .from('market_events')
+      .update({
+        start_at: now.toISOString(),
+        end_at: endAt.toISOString(),
+        status: 'active',
+        is_template: false
+      })
+      .eq('id', eventId)
+      .select('*, event_drinks(drink_id)')
+      .single();
+
+    if (error) throw error;
+    return this.mapEvent(data);
+  }
+
   async deleteEvent(eventId: string): Promise<void> {
     const { error } = await this.client
       .from('market_events')
@@ -139,6 +181,29 @@ export class SupabaseMarketRepository implements IMarketSessionRepository {
       .from('market_sessions')
       .update({ is_active: false })
       .eq('id', sessionId);
+
+    if (error) throw error;
+  }
+
+  async acquireCycleLock(sessionId: string, currentCycle: number, lastUpdateThreshold: Date): Promise<boolean> {
+    const { data, error } = await this.client
+      .from('market_sessions')
+      .update({ 
+        last_price_update_at: new Date().toISOString()
+      })
+      .eq('id', sessionId)
+      .eq('current_cycle_number', currentCycle)
+      .lte('last_price_update_at', lastUpdateThreshold.toISOString())
+      .select();
+
+    if (error) throw error;
+    return (data && data.length > 0);
+  }
+
+  async savePriceHistory(entries: any[]): Promise<void> {
+    const { error } = await this.client
+      .from('price_history')
+      .insert(entries);
 
     if (error) throw error;
   }
@@ -173,11 +238,14 @@ export class SupabaseMarketRepository implements IMarketSessionRepository {
       id: row.id,
       barmanId: row.barman_id,
       name: row.name,
+      description: row.description,
       type: row.type as any,
       value: Number(row.value),
       startAt: new Date(row.start_at),
       endAt: new Date(row.end_at),
-      drinkIds
+      drinkIds,
+      isTemplate: row.is_template,
+      status: row.status
     };
   }
 }

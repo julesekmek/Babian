@@ -3,8 +3,14 @@ import { Drink } from '../../domain/types';
 import { IDrinkRepository } from '../../domain/repositories/IDrinkRepository';
 import { DrinkRow } from './types';
 
+import { SupabaseClient } from '@supabase/supabase-js';
+
 export class SupabaseDrinkRepository implements IDrinkRepository {
-  private client = createClient();
+  private client: SupabaseClient;
+
+  constructor(client?: SupabaseClient) {
+    this.client = client || createClient();
+  }
 
   async getDrinksByOwner(ownerId: string): Promise<Drink[]> {
     const { data, error } = await this.client
@@ -28,14 +34,14 @@ export class SupabaseDrinkRepository implements IDrinkRepository {
     return data.map(this.mapToDomain);
   }
 
-  async updatePrices(snapshots: { drinkId: string; price: number }[]): Promise<void> {
-    // Supabase doesn't have a multi-row update by ID in a single query easily without RPC
-    // But we can use an 'upsert' or a loop if the number of drinks is small (< 50)
-    // For a senior implementation, an RPC would be better, but let's stick to base for now.
+  async updatePrices(snapshots: { drinkId: string; price: number; marketPrice: number }[]): Promise<void> {
     const promises = snapshots.map((s) =>
       this.client
         .from('drinks')
-        .update({ current_price: s.price })
+        .update({ 
+          current_price: s.price,
+          market_price: s.marketPrice 
+        })
         .eq('id', s.drinkId)
     );
 
@@ -44,13 +50,14 @@ export class SupabaseDrinkRepository implements IDrinkRepository {
     if (error) throw error.error;
   }
 
-  async createDrink(drink: Omit<Drink, 'id' | 'currentPrice' | 'isActive'>): Promise<Drink> {
+  async createDrink(drink: Omit<Drink, 'id' | 'currentPrice' | 'isActive' | 'marketPrice'>): Promise<Drink> {
     const { data, error } = await this.client
       .from('drinks')
       .insert({
         name: drink.name,
         base_price: drink.basePrice,
         current_price: drink.basePrice,
+        market_price: drink.basePrice,
         min_price: drink.minPrice,
         max_price: drink.maxPrice,
         owner_id: drink.ownerId,
@@ -66,7 +73,10 @@ export class SupabaseDrinkRepository implements IDrinkRepository {
   async updatePrice(drinkId: string, price: number): Promise<void> {
     const { error } = await this.client
       .from('drinks')
-      .update({ current_price: price })
+      .update({ 
+        current_price: price,
+        market_price: price // Manual override updates both
+      })
       .eq('id', drinkId);
 
     if (error) throw error;
@@ -102,6 +112,7 @@ export class SupabaseDrinkRepository implements IDrinkRepository {
       name: row.name,
       basePrice: Number(row.base_price),
       currentPrice: Number(row.current_price),
+      marketPrice: Number(row.market_price ?? row.current_price),
       minPrice: Number(row.min_price),
       maxPrice: Number(row.max_price),
       imageUrl: row.image_url,

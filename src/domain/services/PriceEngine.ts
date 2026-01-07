@@ -13,16 +13,25 @@ export class PriceEngine {
   ): PriceSnapshot[] {
     return drinks.map((drink) => {
       const orders = orderCounts[drink.id] || 0;
-      let newPrice = drink.currentPrice;
+      
+      // 1. Calculate internal Market Price (Supply/Demand)
+      // We ALWAYS start from the previous marketPrice to avoid compounding event effects
+      let newMarketPrice = drink.marketPrice;
 
-      // 1. Base Price Variation
       if (orders > 0) {
-        newPrice += orders * config.increasePerOrder;
+        newMarketPrice += orders * config.increasePerOrder;
       } else {
-        newPrice -= config.decreaseOthers;
+        newMarketPrice -= config.decreaseOthers;
       }
 
-      // 2. Apply Events
+      // Enforce configured min/max limits on market price
+      if (newMarketPrice < drink.minPrice) newMarketPrice = drink.minPrice;
+      if (newMarketPrice > drink.maxPrice) newMarketPrice = drink.maxPrice;
+
+      // 2. Calculate Display Price (Market Price + Events Overlay)
+      let newDisplayPrice = newMarketPrice;
+
+      // Apply Events
       for (const event of activeEvents) {
         const isTargeted = event.drinkIds.length === 0 || event.drinkIds.includes(drink.id);
         
@@ -31,34 +40,28 @@ export class PriceEngine {
         switch (event.type) {
           case 'discount':
             // Value is percentage (ex: 30 for 30% off)
-            newPrice *= (1 - event.value / 100);
+            newDisplayPrice *= (1 - event.value / 100);
             break;
           case 'crash':
             // Value is drop percentage (ex: 50 for 50% drop)
-            newPrice *= (1 - event.value / 100);
+            newDisplayPrice *= (1 - event.value / 100);
             break;
           case 'fixed_price':
             // Value is the target price
-            newPrice = event.value;
+            newDisplayPrice = event.value;
             break;
         }
       }
 
-      // 3. Enforce configured min/max limits
-      if (newPrice < drink.minPrice) {
-        newPrice = drink.minPrice;
-      }
-      if (newPrice > drink.maxPrice) {
-        newPrice = drink.maxPrice;
-      }
-
-      // 4. Round to 2 decimals
-      newPrice = Math.round(newPrice * 100) / 100;
+      // 3. Final Rounding
+      newMarketPrice = Math.round(newMarketPrice * 100) / 100;
+      newDisplayPrice = Math.round(newDisplayPrice * 100) / 100;
 
       return {
         drinkId: drink.id,
-        price: newPrice,
-        variation: Math.round((newPrice - drink.currentPrice) * 100) / 100,
+        price: newDisplayPrice,
+        marketPrice: newMarketPrice,
+        variation: Math.round((newDisplayPrice - drink.currentPrice) * 100) / 100,
       };
     });
   }
