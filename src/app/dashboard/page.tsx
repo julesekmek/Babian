@@ -48,9 +48,9 @@ export default function DashboardPage() {
         {/* Header Hub */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 border-b border-neutral-900 pb-12">
           <div className="space-y-2">
-            <h1 className="text-5xl font-black italic tracking-tighter">BUREAU DU <span className="text-rose-500">BARMAN</span></h1>
+            <h1 className="text-5xl font-black italic tracking-tighter">BUREAU DU <span className="text-primary-500">BARMAN</span></h1>
             <p className="text-neutral-500 font-bold uppercase text-xs tracking-widest flex items-center gap-2">
-              <Dna size={14} className="text-rose-500" />
+              <Dna size={14} className="text-primary-500" />
               Session: Hors Ligne • {user?.email}
             </p>
           </div>
@@ -69,7 +69,7 @@ export default function DashboardPage() {
           {/* Execution Card */}
           <motion.div 
             whileHover={{ y: -5 }}
-            className="p-10 rounded-[3rem] bg-rose-500 text-white space-y-8 flex flex-col justify-between overflow-hidden relative group"
+            className="p-10 rounded-[3rem] bg-primary-500 text-white space-y-8 flex flex-col justify-between overflow-hidden relative group"
           >
             <div className="absolute -right-12 -top-12 opacity-10 group-hover:scale-110 transition-transform duration-700">
                <Play size={240} strokeWidth={3} />
@@ -80,14 +80,14 @@ export default function DashboardPage() {
                  <Play fill="white" size={32} />
               </div>
               <h2 className="text-4xl font-black italic leading-tight">LANCER UNE<br />SESSION LIVE</h2>
-              <p className="text-rose-100 font-medium max-w-xs">
+              <p className="text-primary-100 font-medium max-w-xs">
                 Activez la bourse, reset des prix et verrouillage des paramètres pour vos clients.
               </p>
             </div>
 
             <button 
               onClick={() => router.push('/market/launch')}
-              className="w-full py-5 bg-white text-rose-500 rounded-2xl font-black text-lg flex items-center justify-center gap-2 shadow-xl hover:bg-neutral-100 transition-colors relative"
+              className="w-full py-5 bg-white text-primary-500 rounded-2xl font-black text-lg flex items-center justify-center gap-2 shadow-xl hover:bg-neutral-100 transition-colors relative"
             >
               C&apos;EST PARTI !
               <ArrowUpRight size={24} />
@@ -102,7 +102,7 @@ export default function DashboardPage() {
               onClick={() => router.push('/admin/drinks')}
               className="p-8 rounded-[2.5rem] bg-neutral-900 border border-neutral-800 flex flex-col items-start gap-4 hover:border-neutral-700 transition-all group"
             >
-              <div className="p-4 bg-neutral-800 rounded-2xl text-rose-500 group-hover:bg-rose-500 group-hover:text-white transition-colors">
+              <div className="p-4 bg-neutral-800 rounded-2xl text-primary-500 group-hover:bg-primary-500 group-hover:text-white transition-colors">
                  <Wine size={24} />
               </div>
               <div className="text-left">
@@ -116,7 +116,7 @@ export default function DashboardPage() {
               onClick={() => router.push('/admin/events')}
               className="p-8 rounded-[2.5rem] bg-neutral-900 border border-neutral-800 flex flex-col items-start gap-4 hover:border-neutral-700 transition-all group"
             >
-              <div className="p-4 bg-neutral-800 rounded-2xl text-rose-500 group-hover:bg-rose-500 group-hover:text-white transition-colors">
+              <div className="p-4 bg-neutral-800 rounded-2xl text-primary-500 group-hover:bg-primary-500 group-hover:text-white transition-colors">
                  <Calendar size={24} />
               </div>
               <div className="text-left">
@@ -130,7 +130,7 @@ export default function DashboardPage() {
               onClick={() => router.push('/admin/config')}
               className="p-8 rounded-[2.5rem] bg-neutral-900 border border-neutral-800 flex flex-col items-start gap-4 hover:border-neutral-700 transition-all group"
             >
-              <div className="p-4 bg-neutral-800 rounded-2xl text-rose-500 group-hover:bg-rose-500 group-hover:text-white transition-colors">
+              <div className="p-4 bg-neutral-800 rounded-2xl text-primary-500 group-hover:bg-primary-500 group-hover:text-white transition-colors">
                  <Settings size={24} />
               </div>
               <div className="text-left">
@@ -144,7 +144,7 @@ export default function DashboardPage() {
               onClick={() => router.push('/admin/stats')}
               className="p-8 rounded-[2.5rem] bg-neutral-900 border border-neutral-800 flex flex-col items-start gap-4 hover:border-neutral-700 transition-all group opacity-50"
             >
-              <div className="p-4 bg-neutral-800 rounded-2xl text-rose-500 group-hover:bg-rose-500 group-hover:text-white transition-colors">
+              <div className="p-4 bg-neutral-800 rounded-2xl text-primary-500 group-hover:bg-primary-500 group-hover:text-white transition-colors">
                  <BarChart3 size={24} />
               </div>
               <div className="text-left">

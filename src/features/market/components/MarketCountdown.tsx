@@ -56,7 +56,7 @@ export const MarketCountdown: React.FC<MarketCountdownProps> = ({
   return (
     <div className="flex flex-col items-end">
       <div className="flex items-center gap-2 mb-1">
-        <div className={`w-2 h-2 rounded-full ${isUrgent ? 'bg-rose-500 animate-ping' : 'bg-green-500 animate-pulse'}`} />
+        <div className={`w-2 h-2 rounded-full ${isUrgent ? 'bg-primary-500 animate-ping' : 'bg-green-500 animate-pulse'}`} />
         <span className="text-[10px] md:text-xs font-black uppercase tracking-widest text-neutral-500">
              Prochain cycle
         </span>
@@ -70,7 +70,7 @@ export const MarketCountdown: React.FC<MarketCountdownProps> = ({
             exit={{ y: -20, opacity: 0 }}
             transition={{ type: "spring", stiffness: 300, damping: 20 }}
             className={`text-5xl md:text-6xl font-black italic tracking-tighter tabular-nums leading-none ${
-                isUrgent ? 'text-rose-500' : 'text-white'
+                isUrgent ? 'text-primary-500' : 'text-white'
             }`}
           >
             {formattedTime}

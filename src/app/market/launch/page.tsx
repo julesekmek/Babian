@@ -103,13 +103,13 @@ export default function MarketLaunchPage() {
           <motion.div 
             animate={{ y: [0, -10, 0] }}
             transition={{ repeat: Infinity, duration: 2 }}
-            className="w-24 h-24 bg-rose-500/10 text-rose-500 rounded-3xl flex items-center justify-center mx-auto"
+            className="w-24 h-24 bg-primary-500/10 text-primary-500 rounded-3xl flex items-center justify-center mx-auto"
           >
             <Rocket size={48} />
           </motion.div>
           <h1 className="text-5xl font-black italic tracking-tighter uppercase">
              {activeSession ? "Session En Cours" : "Prêt pour le "}
-             {!activeSession && <span className="text-rose-500">Décollage ?</span>}
+             {!activeSession && <span className="text-primary-500">Décollage ?</span>}
           </h1>
           <p className="text-neutral-500 font-medium">
              {activeSession 
@@ -139,9 +139,9 @@ export default function MarketLaunchPage() {
 
                 <button 
                   onClick={handleReset}
-                  className="p-8 bg-neutral-900 border border-neutral-800 rounded-[2rem] hover:bg-rose-900/20 hover:border-rose-500/50 transition-all text-left space-y-4 group"
+                  className="p-8 bg-neutral-900 border border-neutral-800 rounded-[2rem] hover:bg-primary-900/20 hover:border-primary-500/50 transition-all text-left space-y-4 group"
                 >
-                    <div className="w-12 h-12 bg-rose-500/10 text-rose-500 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform">
+                    <div className="w-12 h-12 bg-primary-500/10 text-primary-500 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform">
                         <RotateCcw size={24} />
                     </div>
                     <div>
@@ -165,7 +165,7 @@ export default function MarketLaunchPage() {
                      <CheckCircle2 size={20} className="text-green-500" />
                      <span>Prix réinitialisés à leur valeur de départ</span>
                   </div>
-                  <div className="flex items-center gap-3 text-sm font-bold text-rose-500">
+                  <div className="flex items-center gap-3 text-sm font-bold text-primary-500">
                      <AlertTriangle size={20} />
                      <span>Paramètres de marché verrouillés pour la session</span>
                   </div>
@@ -174,7 +174,7 @@ export default function MarketLaunchPage() {
                <button 
                  onClick={handleLaunch}
                  disabled={launching || drinkCount === 0}
-                 className="w-full py-6 bg-rose-500 text-white rounded-2xl font-black text-xl flex items-center justify-center gap-3 hover:bg-rose-600 transition-all shadow-xl disabled:opacity-50"
+                 className="w-full py-6 bg-primary-500 text-white rounded-2xl font-black text-xl flex items-center justify-center gap-3 hover:bg-primary-600 transition-all shadow-xl disabled:opacity-50"
                >
                  {launching ? "LANCEMENT..." : "OUVRIR LA BOURSE"}
                  <Rocket size={24} />

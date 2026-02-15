@@ -21,7 +21,7 @@ export const EventAlertBanner: React.FC<EventAlertBannerProps> = ({ events }) =>
   const getEventColor = (type: MarketEvent['type']) => {
     switch (type) {
       case 'discount': return 'bg-yellow-500/10 border-yellow-500/30 text-yellow-500';
-      case 'crash': return 'bg-rose-500/10 border-rose-500/30 text-rose-500';
+      case 'crash': return 'bg-primary-500/10 border-primary-500/30 text-primary-500';
       case 'fixed_price': return 'bg-blue-500/10 border-blue-500/30 text-blue-500';
     }
   };

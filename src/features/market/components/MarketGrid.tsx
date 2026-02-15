@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { Drink } from '@/domain/types';
 import { PriceTicker } from './PriceTicker';
 import { TrendingUp, TrendingDown, Minus } from 'lucide-react';
@@ -47,13 +47,12 @@ export const MarketGrid: React.FC<MarketGridProps> = ({ drinks, variations }) =>
 
   // Dynamic Tailwind classes based on density
   const cardPadding = size === 'large' ? 'p-6' : size === 'medium' ? 'p-4' : size === 'small' ? 'p-2' : 'p-1';
-  const nameSize = size === 'large' ? 'text-3xl' : size === 'medium' ? 'text-xl' : size === 'small' ? 'text-sm' : 'text-xs';
   const priceSize = size === 'large' ? 'text-7xl' : size === 'medium' ? 'text-5xl' : size === 'small' ? 'text-3xl' : 'text-xl';
   const iconSize = size === 'large' ? 32 : size === 'medium' ? 24 : size === 'small' ? 16 : 12;
 
   return (
     <div style={gridStyle} className="h-full w-full gap-2 md:gap-4 p-2">
-        {drinks.map((drink, index) => {
+        {drinks.map((drink) => {
           const variation = variations[drink.id] || 0;
           const isUp = variation > 0;
           const isDown = variation < 0;
@@ -63,6 +62,8 @@ export const MarketGrid: React.FC<MarketGridProps> = ({ drinks, variations }) =>
           const borderColor = isUp ? 'border-green-500' : isDown ? 'border-red-600' : 'border-neutral-800';
           const bgColor = isUp ? 'bg-green-950/20' : isDown ? 'bg-red-950/20' : 'bg-neutral-900';
           const textColor = isUp ? 'text-green-500' : isDown ? 'text-red-500' : 'text-neutral-500';
+
+          const hasImage = !!drink.imageUrl;
 
           return (
             <motion.div
@@ -82,20 +83,42 @@ export const MarketGrid: React.FC<MarketGridProps> = ({ drinks, variations }) =>
               `}
             >
                {/* Background Glow */}
-               <div className={`absolute inset-0 opacity-10 ${isUp ? 'bg-green-500' : isDown ? 'bg-red-600' : 'bg-transparent'}`} />
+               <div className={`absolute inset-0 opacity-10 ${isUp ? 'bg-green-500' : isDown ? 'bg-red-600' : 'bg-transparent'} z-0`} />
 
-              {/* Header: Name & Trend */}
-              <div className="flex justify-between items-start z-10">
-                <h2 className={`${nameSize} font-black uppercase tracking-tight leading-none text-white line-clamp-2 w-full pr-2`}>
-                    {drink.name}
-                </h2>
-                
-                {/* Visual Indicator of Trend */}
-                <div className={`flex flex-col items-end ${textColor}`}>
-                     {isUp && <TrendingUp size={iconSize} />}
-                     {isDown && <TrendingDown size={iconSize} />}
-                     {isNeutral && <Minus size={iconSize} />}
-                </div>
+              {/* Main Content Area */}
+              <div className="flex flex-col items-center justify-start z-10 w-full mb-auto gap-4 pt-2">
+                 {/* Circular Badge (Pastille) */}
+                 {hasImage ? (
+                    <div 
+                      className={`${size === 'large' ? 'w-32 h-32' : size === 'medium' ? 'w-24 h-24' : 'w-16 h-16'} rounded-full bg-cover bg-center border-4 border-neutral-800 shadow-2xl relative`}
+                      style={{ backgroundImage: `url(${drink.imageUrl})` }}
+                    >
+                         {/* Trend Icon absolute on the badge */}
+
+                    </div>
+                 ) : (
+                    // Fallback when no image? Maybe just the trend icon large?
+                    // Or keep the old layout if no image? User implies specific "pastille".
+                    // Let's show a placeholder pastille with initials
+                    <div className={`${size === 'large' ? 'w-32 h-32' : size === 'medium' ? 'w-24 h-24' : 'w-16 h-16'} rounded-full bg-neutral-800 border-4 border-neutral-700 flex items-center justify-center shadow-2xl relative`}>
+                        <span className={`font-black text-neutral-600 ${size === 'large' ? 'text-4xl' : 'text-xl'}`}>
+                            {drink.name[0].toUpperCase()}
+                        </span>
+                         {/* Trend Icon absolute on the badge */}
+
+                    </div>
+                 )}
+                 
+                 <div className="flex flex-col items-center gap-1 w-full px-2">
+                     <h2 className={`text-lg md:text-2xl font-black uppercase tracking-tight leading-none text-white text-center line-clamp-2 w-full`}>
+                        {drink.name}
+                     </h2>
+                     {drink.volume && (
+                        <span className="text-white font-bold text-[10px] md:text-xs uppercase tracking-widest opacity-80">
+                            {drink.volume}
+                        </span>
+                     )}
+                 </div>
               </div>
 
               {/* Price Area */}
@@ -105,6 +128,11 @@ export const MarketGrid: React.FC<MarketGridProps> = ({ drinks, variations }) =>
                     <div className={`${priceSize} font-black italic tracking-tighter tabular-nums leading-none text-white drop-shadow-lg flex items-baseline gap-1`}>
                         <PriceTicker value={drink.currentPrice} />
                         <span className="text-sm md:text-lg opacity-50 font-normal">€</span>
+                        <div className={`ml-3 mb-1 drop-shadow-lg ${textColor}`}>
+                            {isUp && <TrendingUp size={iconSize} />}
+                            {isDown && <TrendingDown size={iconSize} />}
+                            {isNeutral && <Minus size={iconSize} />}
+                        </div>
                     </div>
                  </div>
 

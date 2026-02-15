@@ -104,7 +104,7 @@ export default function PublicPage({ params }: { params: Promise<{ barId: string
 
   if (loading) return (
     <div className="h-screen w-screen bg-black flex items-center justify-center overflow-hidden">
-       <div className="text-rose-500 font-black italic text-4xl animate-pulse tracking-tighter">CHARGEMENT DU MARCHÉ...</div>
+       <div className="text-primary-500 font-black italic text-4xl animate-pulse tracking-tighter">CHARGEMENT DU MARCHÉ...</div>
     </div>
   );
 
@@ -127,11 +127,11 @@ export default function PublicPage({ params }: { params: Promise<{ barId: string
              {/* Title & Concept */}
              <div className="flex flex-col gap-2">
                  <h1 className="text-2xl md:text-4xl font-black italic tracking-tighter leading-none text-white uppercase">
-                     LA BOURSE <span className="text-rose-500">DES BOISSONS EN DIRECT</span>
+                     LA BOURSE <span className="text-primary-500">DES BOISSONS EN DIRECT</span>
                  </h1>
 
                  <p className="text-neutral-400 text-xs md:text-sm font-medium leading-relaxed">
-                    Chaque commande change le prix en temps réel. Les boissons populaires <span className="text-green-500 font-bold">augmentent</span>, celles moins demandées <span className="text-rose-500 font-bold">diminuent</span>. Soyez attentifs !
+                    Chaque commande change le prix en temps réel. Les boissons populaires <span className="text-green-500 font-bold">augmentent</span>, celles moins demandées <span className="text-primary-500 font-bold">diminuent</span>. Soyez attentifs !
                  </p>
              </div>
           </div>

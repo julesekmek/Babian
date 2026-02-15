@@ -61,7 +61,8 @@ export class SupabaseDrinkRepository implements IDrinkRepository {
         min_price: drink.minPrice,
         max_price: drink.maxPrice,
         owner_id: drink.ownerId,
-        image_url: drink.imageUrl
+        image_url: drink.imageUrl,
+        volume: drink.volume
       })
       .select()
       .single();
@@ -100,6 +101,8 @@ export class SupabaseDrinkRepository implements IDrinkRepository {
         base_price: drink.basePrice,
         min_price: drink.minPrice,
         max_price: drink.maxPrice,
+        image_url: drink.imageUrl,
+        volume: drink.volume
       })
       .eq('id', drink.id);
 
@@ -116,6 +119,7 @@ export class SupabaseDrinkRepository implements IDrinkRepository {
       minPrice: Number(row.min_price),
       maxPrice: Number(row.max_price),
       imageUrl: row.image_url,
+      volume: row.volume,
       ownerId: row.owner_id,
       isActive: row.is_active
     };

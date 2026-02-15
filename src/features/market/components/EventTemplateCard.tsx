@@ -19,7 +19,7 @@ export const EventTemplateCard: React.FC<EventTemplateCardProps> = ({
   const getEventIcon = (type: MarketEvent['type']) => {
     switch (type) {
       case 'discount': return <Zap size={20} className="text-yellow-500" />;
-      case 'crash': return <TrendingDown size={20} className="text-rose-500" />;
+      case 'crash': return <TrendingDown size={20} className="text-primary-500" />;
       case 'fixed_price': return <Lock size={20} className="text-blue-500" />;
     }
   };
@@ -27,7 +27,7 @@ export const EventTemplateCard: React.FC<EventTemplateCardProps> = ({
   const getEventColor = (type: MarketEvent['type']) => {
     switch (type) {
       case 'discount': return 'border-yellow-500/30 hover:border-yellow-500/50';
-      case 'crash': return 'border-rose-500/30 hover:border-rose-500/50';
+      case 'crash': return 'border-primary-500/30 hover:border-primary-500/50';
       case 'fixed_price': return 'border-blue-500/30 hover:border-blue-500/50';
     }
   };
@@ -63,7 +63,7 @@ export const EventTemplateCard: React.FC<EventTemplateCardProps> = ({
           onClick={handleClick}
           disabled={isActivating}
           className={`p-2 rounded-xl transition-all disabled:opacity-50 shrink-0 flex items-center gap-2 ${
-            showConfirm ? 'bg-green-500 hover:bg-green-600 text-white w-auto px-4' : 'bg-rose-500 hover:bg-rose-600 text-white'
+            showConfirm ? 'bg-green-500 hover:bg-green-600 text-white w-auto px-4' : 'bg-primary-500 hover:bg-primary-600 text-white'
           }`}
         >
           {isActivating ? (

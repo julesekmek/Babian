@@ -49,7 +49,7 @@ export default function LandingLoginPage() {
 
   if (initialLoading) {
     return <div className="min-h-screen bg-black flex items-center justify-center">
-      <div className="w-8 h-8 border-4 border-rose-500/20 border-t-rose-500 rounded-full animate-spin" />
+      <div className="w-8 h-8 border-4 border-primary-500/20 border-t-primary-500 rounded-full animate-spin" />
     </div>;
   }
 
@@ -65,7 +65,7 @@ export default function LandingLoginPage() {
           >
             <h1 className="text-6xl md:text-8xl font-black leading-none tracking-tighter italic">
               VOTRE BAR.<br />
-              <span className="text-rose-500">VOTRE BOURSE.</span>
+              <span className="text-primary-500">VOTRE BOURSE.</span>
             </h1>
             <p className="text-neutral-500 text-lg md:text-xl font-medium max-w-md">
               L&apos;outil de gamification ultime pour transformer vos boissons en actifs cotés.
@@ -74,11 +74,11 @@ export default function LandingLoginPage() {
 
           <div className="hidden lg:grid grid-cols-2 gap-4 pt-8">
             <div className="p-4 rounded-2xl bg-neutral-900/50 border border-neutral-800">
-               <div className="text-rose-500 font-bold mb-1">DYNAMIQUE</div>
+               <div className="text-primary-500 font-bold mb-1">DYNAMIQUE</div>
                <p className="text-xs text-neutral-500">Les prix s&apos;ajustent en temps réel selon la demande.</p>
             </div>
             <div className="p-4 rounded-2xl bg-neutral-900/50 border border-neutral-800">
-               <div className="text-rose-500 font-bold mb-1">INTERACTIF</div>
+               <div className="text-primary-500 font-bold mb-1">INTERACTIF</div>
                <p className="text-xs text-neutral-500">Créez l&apos;événement et boostez vos ventes.</p>
             </div>
           </div>
@@ -91,7 +91,7 @@ export default function LandingLoginPage() {
           className="w-full max-w-md p-8 rounded-[2.5rem] bg-neutral-900 border border-neutral-800 shadow-2xl space-y-8"
         >
           <div className="flex items-center gap-4">
-            <div className="p-3 rounded-2xl bg-rose-500/10 text-rose-500">
+            <div className="p-3 rounded-2xl bg-primary-500/10 text-primary-500">
               <ShieldCheck size={24} />
             </div>
             <div>
@@ -110,7 +110,7 @@ export default function LandingLoginPage() {
                 required
                 value={email}
                 onChange={e => setEmail(e.target.value)}
-                className="w-full bg-neutral-800 border-none rounded-2xl p-4 font-bold focus:ring-2 focus:ring-rose-500 transition-all placeholder:text-neutral-700"
+                className="w-full bg-neutral-800 border-none rounded-2xl p-4 font-bold focus:ring-2 focus:ring-primary-500 transition-all placeholder:text-neutral-700"
                 placeholder="nom@bar.com"
               />
             </div>
@@ -122,13 +122,13 @@ export default function LandingLoginPage() {
                 required
                 value={password}
                 onChange={e => setPassword(e.target.value)}
-                className="w-full bg-neutral-800 border-none rounded-2xl p-4 font-bold focus:ring-2 focus:ring-rose-500 transition-all placeholder:text-neutral-700"
+                className="w-full bg-neutral-800 border-none rounded-2xl p-4 font-bold focus:ring-2 focus:ring-primary-500 transition-all placeholder:text-neutral-700"
                 placeholder="••••••••"
               />
             </div>
 
             {error && (
-              <div className="p-4 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-500 text-xs font-bold animate-shake">
+              <div className="p-4 rounded-xl bg-primary-500/10 border border-primary-500/20 text-primary-500 text-xs font-bold animate-shake">
                 {error}
               </div>
             )}
@@ -157,7 +157,7 @@ export default function LandingLoginPage() {
           <div className="text-center">
             <button 
               onClick={() => setIsLogin(!isLogin)}
-              className="text-xs font-black text-neutral-600 hover:text-rose-500 transition-colors flex items-center justify-center gap-1 mx-auto"
+              className="text-xs font-black text-neutral-600 hover:text-primary-500 transition-colors flex items-center justify-center gap-1 mx-auto"
             >
               {isLogin ? (
                 <>Pas encore de compte ? <span className="underline decoration-neutral-800 underline-offset-4 decoration-2">S&apos;inscrire</span></>

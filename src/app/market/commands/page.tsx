@@ -163,7 +163,7 @@ export default function MarketCommandsPage() {
             onClick={handleReturnToDashboard}
             className={`flex items-center gap-2 transition-all px-4 py-2 rounded-xl font-bold text-sm uppercase ${
               showDashboardConfirm 
-                ? 'bg-rose-500 text-white shadow-lg hover:bg-rose-600' 
+                ? 'bg-primary-500 text-white shadow-lg hover:bg-primary-600' 
                 : 'text-neutral-500 hover:text-white hover:bg-neutral-800'
             }`}
           >
@@ -183,7 +183,7 @@ export default function MarketCommandsPage() {
           <div className="flex items-center gap-6">
              <div className="text-center">
                 <p className="text-[10px] font-black text-neutral-500 uppercase">Cycle Actuel</p>
-                <p className="text-4xl font-black tabular-nums text-rose-500 italic">#{session.currentCycleNumber}</p>
+                <p className="text-4xl font-black tabular-nums text-primary-500 italic">#{session.currentCycleNumber}</p>
              </div>
              <div className="h-10 w-px bg-neutral-800" />
              <div className="space-y-2">
@@ -217,7 +217,7 @@ export default function MarketCommandsPage() {
              </button>
              <button 
                onClick={closeSession}
-               className="p-3 text-neutral-500 hover:text-rose-500 transition-colors"
+               className="p-3 text-neutral-500 hover:text-primary-500 transition-colors"
                title="Clore la session"
              >
                <XCircle size={28} />
@@ -227,18 +227,18 @@ export default function MarketCommandsPage() {
 
         {/* Active Events Display */}
         {activeEvents.length > 0 && (
-          <div className="bg-gradient-to-r from-rose-900/50 to-neutral-900 border border-rose-500/20 rounded-3xl p-6 relative overflow-hidden">
+          <div className="bg-gradient-to-r from-primary-900/50 to-neutral-900 border border-primary-500/20 rounded-3xl p-6 relative overflow-hidden">
              <div className="flex items-center gap-4 relative z-10">
-                <div className="p-3 bg-rose-500 text-white rounded-xl animate-pulse">
+                <div className="p-3 bg-primary-500 text-white rounded-xl animate-pulse">
                     <Zap size={24} />
                 </div>
                 <div>
                    <h2 className="font-black text-xl italic uppercase text-white">Événements en cours</h2>
                    <div className="flex gap-4 mt-2">
                       {activeEvents.map(evt => (
-                          <div key={evt.id} className="bg-black/50 backdrop-blur-sm px-4 py-2 rounded-lg border border-rose-500/30 flex items-center gap-2">
-                              <span className="font-bold text-rose-200">{evt.name}</span>
-                              <span className="text-xs text-rose-500 font-black px-2 py-0.5 bg-rose-950 rounded uppercase">{evt.type}</span>
+                          <div key={evt.id} className="bg-black/50 backdrop-blur-sm px-4 py-2 rounded-lg border border-primary-500/30 flex items-center gap-2">
+                              <span className="font-bold text-primary-200">{evt.name}</span>
+                              <span className="text-xs text-primary-500 font-black px-2 py-0.5 bg-primary-950 rounded uppercase">{evt.type}</span>
                           </div>
                       ))}
                    </div>
@@ -255,8 +255,8 @@ export default function MarketCommandsPage() {
               className="w-full p-6 flex items-center justify-between hover:bg-neutral-800/50 transition-colors"
             >
               <div className="flex items-center gap-3">
-                <div className="p-2 bg-rose-500/10 rounded-xl">
-                  <Zap className="text-rose-500" size={20} />
+                <div className="p-2 bg-primary-500/10 rounded-xl">
+                  <Zap className="text-primary-500" size={20} />
                 </div>
                 <div className="text-left">
                   <h2 className="font-black text-lg uppercase tracking-tight">Événements Pré-Créés</h2>
@@ -292,17 +292,17 @@ export default function MarketCommandsPage() {
               <motion.button
                 whileTap={{ scale: 0.95 }}
                 onClick={() => handleOrder(drink.id)}
-                className="w-full aspect-square p-6 rounded-[2.5rem] bg-neutral-900 border-2 border-neutral-800 hover:border-rose-500/50 flex flex-col items-center justify-center text-center gap-2 transition-all group shadow-xl relative overflow-hidden"
+                className="w-full aspect-square p-6 rounded-[2.5rem] bg-neutral-900 border-2 border-neutral-800 hover:border-primary-500/50 flex flex-col items-center justify-center text-center gap-2 transition-all group shadow-xl relative overflow-hidden"
               >
                 <div className="absolute top-4 right-4 flex items-center gap-1 opacity-50 group-hover:opacity-100 transition-opacity">
                      <Trophy size={12} className="text-yellow-500" />
                      <span className="text-[10px] font-black text-neutral-400">{globalCounts[drink.id] || 0}</span>
                 </div>
 
-                <span className="text-lg font-black leading-tight group-hover:text-rose-500 transition-colors mt-2">{drink.name}</span>
+                <span className="text-lg font-black leading-tight group-hover:text-primary-500 transition-colors mt-2">{drink.name}</span>
                 <span className="text-[10px] font-black text-neutral-500 tabular-nums">{drink.currentPrice.toFixed(2)}€</span>
                 
-                <div className="mt-4 w-12 h-12 rounded-2xl bg-neutral-800 flex items-center justify-center group-hover:bg-rose-500 group-hover:text-white transition-colors">
+                <div className="mt-4 w-12 h-12 rounded-2xl bg-neutral-800 flex items-center justify-center group-hover:bg-primary-500 group-hover:text-white transition-colors">
                    <Plus size={24} />
                 </div>
               </motion.button>
@@ -313,7 +313,7 @@ export default function MarketCommandsPage() {
                     initial={{ scale: 0, rotate: -20 }}
                     animate={{ scale: 1, rotate: 0 }}
                     key={`badge-${drink.id}-${counts[drink.id]}`}
-                    className="absolute -top-3 -right-3 min-w-10 h-10 px-2 rounded-full bg-rose-500 border-4 border-black flex items-center justify-center text-sm font-black text-white shadow-xl pointer-events-none z-10"
+                    className="absolute -top-3 -right-3 min-w-10 h-10 px-2 rounded-full bg-primary-500 border-4 border-black flex items-center justify-center text-sm font-black text-white shadow-xl pointer-events-none z-10"
                   >
                     {counts[drink.id]}
                   </motion.div>

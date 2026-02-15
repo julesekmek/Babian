@@ -6,6 +6,7 @@ export interface DrinkRow {
   min_price: string | number;
   max_price: string | number;
   image_url?: string;
+  volume?: string;
   owner_id: string;
   is_active: boolean;
   market_price: string | number;

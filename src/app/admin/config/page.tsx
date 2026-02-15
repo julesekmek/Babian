@@ -100,16 +100,16 @@ export default function AdminConfigPage() {
         </button>
 
         <div className="flex items-center gap-4">
-          <div className="p-3 bg-neutral-900 rounded-2xl text-rose-500">
+          <div className="p-3 bg-neutral-900 rounded-2xl text-primary-500">
             <Settings size={32} />
           </div>
           <h1 className="text-4xl font-black italic tracking-tight uppercase">
-            RÈGLES DU <span className="text-rose-500">MARCHÉ</span>
+            RÈGLES DU <span className="text-primary-500">MARCHÉ</span>
           </h1>
         </div>
 
         {error && (
-          <div className="p-6 rounded-2xl bg-rose-500/10 border border-rose-500/30 text-rose-500">
+          <div className="p-6 rounded-2xl bg-primary-500/10 border border-primary-500/30 text-primary-500">
             <p className="font-bold text-sm">{error}</p>
           </div>
         )}
@@ -139,7 +139,7 @@ export default function AdminConfigPage() {
                   required
                   value={formData.increasePerOrder}
                   onChange={e => setFormData(prev => ({ ...prev, increasePerOrder: e.target.value }))}
-                  className="w-full bg-neutral-800 border-none rounded-xl p-4 font-bold text-lg focus:ring-2 focus:ring-rose-500 transition-all"
+                  className="w-full bg-neutral-800 border-none rounded-xl p-4 font-bold text-lg focus:ring-2 focus:ring-primary-500 transition-all"
                 />
               </label>
             </div>
@@ -160,7 +160,7 @@ export default function AdminConfigPage() {
                   required
                   value={formData.decreaseOthers}
                   onChange={e => setFormData(prev => ({ ...prev, decreaseOthers: e.target.value }))}
-                  className="w-full bg-neutral-800 border-none rounded-xl p-4 font-bold text-lg focus:ring-2 focus:ring-rose-500 transition-all"
+                  className="w-full bg-neutral-800 border-none rounded-xl p-4 font-bold text-lg focus:ring-2 focus:ring-primary-500 transition-all"
                 />
               </label>
             </div>
@@ -177,7 +177,7 @@ export default function AdminConfigPage() {
                 <select
                   value={formData.cycleDurationSeconds}
                   onChange={e => setFormData(prev => ({ ...prev, cycleDurationSeconds: e.target.value }))}
-                  className="w-full bg-neutral-800 border-none rounded-xl p-4 font-bold text-lg focus:ring-2 focus:ring-rose-500 transition-all"
+                  className="w-full bg-neutral-800 border-none rounded-xl p-4 font-bold text-lg focus:ring-2 focus:ring-primary-500 transition-all"
                 >
                   <option value="10">10 secondes (test rapide)</option>
                   <option value="30">30 secondes</option>
@@ -193,7 +193,7 @@ export default function AdminConfigPage() {
           <button
             type="submit"
             disabled={isSaving}
-            className="w-full py-5 bg-rose-500 text-white rounded-2xl font-black flex items-center justify-center gap-2 hover:bg-rose-600 transition-all shadow-xl disabled:opacity-50"
+            className="w-full py-5 bg-primary-500 text-white rounded-2xl font-black flex items-center justify-center gap-2 hover:bg-primary-600 transition-all shadow-xl disabled:opacity-50"
           >
             {isSaving ? (
               <>
@@ -214,7 +214,7 @@ export default function AdminConfigPage() {
             <p className="text-[10px] font-black text-neutral-500 uppercase mb-3">Configuration actuelle</p>
             <div className="grid grid-cols-3 gap-4 text-center">
               <div>
-                <p className="text-2xl font-black text-rose-500">{config.increasePerOrder.toFixed(2)}€</p>
+                <p className="text-2xl font-black text-primary-500">{config.increasePerOrder.toFixed(2)}€</p>
                 <p className="text-[10px] text-neutral-600 uppercase font-bold mt-1">Hausse/commande</p>
               </div>
               <div>

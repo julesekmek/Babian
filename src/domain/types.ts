@@ -6,6 +6,7 @@ export interface Drink {
   minPrice: number;
   maxPrice: number;
   imageUrl?: string;
+  volume?: string;
   ownerId: string;
   isActive: boolean;
   marketPrice: number; // Price before events

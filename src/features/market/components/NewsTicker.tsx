@@ -25,7 +25,7 @@ export const NewsTicker: React.FC<NewsTickerProps> = ({ events, topDrinks = [], 
       id: 'market-status',
       content: 'BOURSE EN DIRECT',
       detail: 'LA DEMANDE FAIT LE PRIX',
-      color: 'text-rose-500'
+      color: 'text-primary-500'
     },
     // 3. Top Movers with Stats
     ...topDrinks.map(drink => {
@@ -54,7 +54,7 @@ export const NewsTicker: React.FC<NewsTickerProps> = ({ events, topDrinks = [], 
   return (
     <div className="fixed bottom-0 left-0 right-0 z-50 h-16 bg-neutral-900 border-t border-neutral-800 flex items-center overflow-hidden">
         {/* Label Fixed Left */}
-        <div className="shrink-0 bg-rose-600 h-full px-6 flex items-center justify-center z-10 shadow-xl relative after:absolute after:right-[-20px] after:top-0 after:border-t-32 after:border-t-transparent after:border-l-20 after:border-l-rose-600 after:border-b-32 after:border-b-transparent">
+        <div className="shrink-0 bg-primary-600 h-full px-6 flex items-center justify-center z-10 shadow-xl relative after:absolute after:right-[-20px] after:top-0 after:border-t-32 after:border-t-transparent after:border-l-20 after:border-l-primary-600 after:border-b-32 after:border-b-transparent">
             <span className="font-black italic text-white uppercase tracking-tighter text-lg">
                 FLASH INFOS
             </span>
@@ -66,7 +66,7 @@ export const NewsTicker: React.FC<NewsTickerProps> = ({ events, topDrinks = [], 
                  {[...tickerItems, ...tickerItems].map((item, i) => (
                      <div key={`${item.id}-${i}`} className="flex items-center gap-3">
                          {item.type === 'event' && <Zap size={18} className="text-yellow-400 animate-pulse" />}
-                         {item.type === 'status' && <Info size={18} className="text-rose-500" />}
+                         {item.type === 'status' && <Info size={18} className="text-primary-500" />}
                          {item.type === 'quote' && (
                              item.color.includes('green') ? <TrendingUp size={18} className="text-green-500" /> :
                              item.color.includes('red') ? <TrendingDown size={18} className="text-red-500" /> : null

@@ -152,10 +152,10 @@ export default function AdminEventsPage() {
 
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <div className="p-3 bg-neutral-900 rounded-2xl text-rose-500">
+            <div className="p-3 bg-neutral-900 rounded-2xl text-primary-500">
               <Calendar size={32} />
             </div>
-            <h1 className="text-4xl font-black italic tracking-tight uppercase">ÉVÉNEMENTS <span className="text-rose-500">SPÉCIAUX</span></h1>
+            <h1 className="text-4xl font-black italic tracking-tight uppercase">ÉVÉNEMENTS <span className="text-primary-500">SPÉCIAUX</span></h1>
           </div>
           <button 
             onClick={() => setShowModal(true)}
@@ -174,7 +174,7 @@ export default function AdminEventsPage() {
                 <p className="text-[10px] text-neutral-500 font-medium">Baisse immédiate sur une sélection.</p>
             </div>
             <div className="p-6 rounded-[2rem] bg-neutral-900/50 border border-neutral-800 flex flex-col gap-3">
-                <TrendingDown className="text-rose-500" />
+                <TrendingDown className="text-primary-500" />
                 <h3 className="font-bold uppercase italic text-sm">Krach Boursier</h3>
                 <p className="text-[10px] text-neutral-500 font-medium">Tous les prix chutent simultanément.</p>
             </div>
@@ -204,10 +204,10 @@ export default function AdminEventsPage() {
               {events.map(event => {
                 const status = getEventStatus(event);
                 const Icon = event.type === 'crash' ? TrendingDown : event.type === 'discount' ? Zap : Sparkles;
-                const iconColor = event.type === 'crash' ? 'text-rose-500' : event.type === 'discount' ? 'text-yellow-500' : 'text-blue-500';
+                const iconColor = event.type === 'crash' ? 'text-primary-500' : event.type === 'discount' ? 'text-yellow-500' : 'text-blue-500';
 
                 return (
-                  <div key={event.id} className={`p-5 rounded-2xl bg-neutral-900 border flex items-center justify-between group transition-all ${status === 'active' ? 'border-rose-500/30 ring-1 ring-rose-500/20' : 'border-neutral-800'}`}>
+                  <div key={event.id} className={`p-5 rounded-2xl bg-neutral-900 border flex items-center justify-between group transition-all ${status === 'active' ? 'border-primary-500/30 ring-1 ring-primary-500/20' : 'border-neutral-800'}`}>
                     <div className="flex items-center gap-4">
                       <div className={`w-12 h-12 rounded-xl bg-neutral-800 flex items-center justify-center ${iconColor}`}>
                          <Icon size={24} />
@@ -216,7 +216,7 @@ export default function AdminEventsPage() {
                         <div className="flex items-center gap-3">
                            <span className="font-black text-sm uppercase italic">{event.name}</span>
                            <span className={`text-[8px] font-black uppercase px-2 py-0.5 rounded-full ${
-                             status === 'active' ? 'bg-rose-500 text-white animate-pulse' : 
+                             status === 'active' ? 'bg-primary-500 text-white animate-pulse' : 
                              status === 'scheduled' ? 'bg-blue-500/10 text-blue-500' : 
                              'bg-neutral-800 text-neutral-500'
                            }`}>
@@ -238,7 +238,7 @@ export default function AdminEventsPage() {
                        </div>
                        <button 
                          onClick={() => handleDeleteEvent(event.id)}
-                         className="p-3 text-neutral-700 hover:text-rose-500 transition-colors"
+                         className="p-3 text-neutral-700 hover:text-primary-500 transition-colors"
                        >
                          <Trash2 size={18} />
                        </button>
@@ -261,7 +261,7 @@ export default function AdminEventsPage() {
           >
             <div className="p-8 border-b border-neutral-800 flex items-center justify-between bg-neutral-950/50">
                <div>
-                  <h2 className="text-2xl font-black italic uppercase tracking-tight">Nouvel <span className="text-rose-500">Événement</span></h2>
+                  <h2 className="text-2xl font-black italic uppercase tracking-tight">Nouvel <span className="text-primary-500">Événement</span></h2>
                   <p className="text-[10px] font-black text-neutral-500 uppercase">Paramétrez votre temps fort boursier</p>
                </div>
                <button onClick={() => setShowModal(false)} className="p-2 hover:bg-neutral-800 rounded-xl transition-colors text-neutral-500">
@@ -280,7 +280,7 @@ export default function AdminEventsPage() {
                       placeholder="ex: Krach de Minuit, Flash Mojito..."
                       value={newEvent.name}
                       onChange={e => setNewEvent(prev => ({ ...prev, name: e.target.value }))}
-                      className="w-full bg-neutral-800 border-none rounded-xl p-4 font-bold focus:ring-2 focus:ring-rose-500 transition-all text-sm"
+                      className="w-full bg-neutral-800 border-none rounded-xl p-4 font-bold focus:ring-2 focus:ring-primary-500 transition-all text-sm"
                     />
                   </div>
 
@@ -292,7 +292,7 @@ export default function AdminEventsPage() {
                       value={newEvent.description}
                       onChange={e => setNewEvent(prev => ({ ...prev, description: e.target.value }))}
                       rows={3}
-                      className="w-full bg-neutral-800 border-none rounded-xl p-4 font-medium focus:ring-2 focus:ring-rose-500 transition-all text-sm resize-none"
+                      className="w-full bg-neutral-800 border-none rounded-xl p-4 font-medium focus:ring-2 focus:ring-primary-500 transition-all text-sm resize-none"
                     />
                   </div>
 
@@ -308,7 +308,7 @@ export default function AdminEventsPage() {
                             onClick={() => setNewEvent(prev => ({ ...prev, type, value: type === 'fixed_price' ? '2.00' : '30' }))}
                             className={`p-3 rounded-xl border text-[10px] font-black uppercase transition-all flex flex-col items-center gap-2 ${
                               newEvent.type === type 
-                              ? 'bg-rose-500 border-rose-500 text-white shadow-lg' 
+                              ? 'bg-primary-500 border-primary-500 text-white shadow-lg' 
                               : 'bg-neutral-800 border-neutral-700 text-neutral-400 hover:border-neutral-500'
                             }`}
                           >
@@ -331,7 +331,7 @@ export default function AdminEventsPage() {
                         step={newEvent.type === 'fixed_price' ? '0.1' : '1'}
                         value={newEvent.value}
                         onChange={e => setNewEvent(prev => ({ ...prev, value: e.target.value }))}
-                        className="w-full bg-neutral-800 border-none rounded-xl p-4 font-black text-xl text-center focus:ring-2 focus:ring-rose-500 transition-all"
+                        className="w-full bg-neutral-800 border-none rounded-xl p-4 font-black text-xl text-center focus:ring-2 focus:ring-primary-500 transition-all"
                       />
                     </div>
                   </div>
@@ -374,7 +374,7 @@ export default function AdminEventsPage() {
                         <select 
                           value={newEvent.durationMinutes}
                           onChange={e => setNewEvent(prev => ({ ...prev, durationMinutes: e.target.value }))}
-                          className="w-full bg-neutral-800 border-none rounded-xl p-4 font-bold text-sm focus:ring-2 focus:ring-rose-500 transition-all"
+                          className="w-full bg-neutral-800 border-none rounded-xl p-4 font-bold text-sm focus:ring-2 focus:ring-primary-500 transition-all"
                         >
                           <option value="5">5 minutes</option>
                           <option value="15">15 minutes</option>
@@ -392,7 +392,7 @@ export default function AdminEventsPage() {
                         <button 
                           type="button"
                           onClick={() => setNewEvent(prev => ({ ...prev, selectedDrinkIds: prev.selectedDrinkIds.length === drinks.length ? [] : drinks.map(d => d.id) }))}
-                          className="text-[10px] font-black text-rose-500 uppercase hover:underline"
+                          className="text-[10px] font-black text-primary-500 uppercase hover:underline"
                         >
                           {newEvent.selectedDrinkIds.length === drinks.length ? 'Tout désélectionner' : 'Tout sélectionner'}
                         </button>
@@ -408,12 +408,12 @@ export default function AdminEventsPage() {
                               onClick={() => toggleDrink(drink.id)}
                               className={`p-3 rounded-xl border text-[10px] font-bold transition-all flex items-center justify-between gap-2 text-left ${
                                 isSelected 
-                                ? 'bg-rose-500/10 border-rose-500/50 text-white' 
+                                ? 'bg-primary-500/10 border-primary-500/50 text-white' 
                                 : 'bg-neutral-800/50 border-neutral-700 text-neutral-500 hover:border-neutral-600'
                               }`}
                             >
                               <span className="truncate">{drink.name}</span>
-                              {isSelected && <Check size={12} className="text-rose-500 shrink-0" />}
+                              {isSelected && <Check size={12} className="text-primary-500 shrink-0" />}
                             </button>
                           );
                         })}
@@ -425,7 +425,7 @@ export default function AdminEventsPage() {
                <button 
                  type="submit"
                  disabled={isSaving || !newEvent.name}
-                 className="w-full py-5 bg-rose-500 text-white rounded-2xl font-black flex items-center justify-center gap-2 hover:bg-rose-600 transition-all shadow-xl disabled:opacity-50"
+                 className="w-full py-5 bg-primary-500 text-white rounded-2xl font-black flex items-center justify-center gap-2 hover:bg-primary-600 transition-all shadow-xl disabled:opacity-50"
                >
                  {isSaving ? (
                    <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
